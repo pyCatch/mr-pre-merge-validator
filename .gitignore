@@ -216,3 +216,45 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local Poetry config (machine-specific)
+poetry.toml
+
+# Python version managers
+.python-version
+
+# Local logs
+*.log
+logs/
+
+# Local runtime files
+*.tmp
+*.bak
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# macOS hidden files in folders
+.apdisk
+
+# IDE local settings
+.idea/
+.vscode/
+
+# Local secrets
+.env.local
+.env.*.local
+
+# Test artifacts
+coverage.xml
+htmlcov/
+
+# Local executable permissions cache
+*.pid.lock
