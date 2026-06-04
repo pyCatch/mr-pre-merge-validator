@@ -1,5 +1,7 @@
 import argparse
+import asyncio
 
+from mr_validator.clients.gitlab_client import GitLabClient
 from mr_validator.config import Settings
 
 
@@ -30,28 +32,43 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def run_validate(project: str, mr_iid: int) -> int:
+async def run_validate(
+    project: str,
+    mr_iid: int,
+) -> int:
     settings = Settings()
 
+    gitlab_client = GitLabClient(settings)
+
+    mr = await gitlab_client.get_merge_request(
+        project=project,
+        mr_iid=mr_iid,
+    )
+
     print("MR Pre-Merge Validator")
-    print(f"Project: {project}")
-    print(f"MR IID: {mr_iid}")
-    print("Configuration:")
-    print(f"GitLab URL: {settings.gitlab_base_url}")
-    print(f"Jira URL: {settings.jira_base_url}")
-    print("Status: NOT IMPLEMENTED YET")
+    print(f"Title: {mr.title}")
+    print(f"Branch: {mr.source_branch}")
+    print(f"Draft: {mr.is_draft}")
+    print(f"Commits: {len(mr.commits)}")
+
+    return 0
+
+
+async def async_main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+    if args.command == "validate":
+        return await run_validate(
+            project=args.project,
+            mr_iid=args.mr_iid,
+        )
 
     return 2
 
-
 def main() -> None:
-    parser = build_parser()
-    args = parser.parse_args()
-
-    if args.command == "validate":
-        raise SystemExit(run_validate(project=args.project, mr_iid=args.mr_iid))
-
-    raise SystemExit(2)
+    raise SystemExit(
+        asyncio.run(async_main())
+    )
 
 
 if __name__ == "__main__":
