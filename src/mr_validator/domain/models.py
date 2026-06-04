@@ -15,3 +15,10 @@ class MergeRequest:
     source_branch: str
     is_draft: bool
     commits: tuple[Commit, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class JiraIssue:
+    key: str
+    status: str
+    issue_type: str
