@@ -1,5 +1,7 @@
 import argparse
 
+from mr_validator.config import Settings
+
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -29,10 +31,16 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def run_validate(project: str, mr_iid: int) -> int:
+    settings = Settings()
+
     print("MR Pre-Merge Validator")
     print(f"Project: {project}")
     print(f"MR IID: {mr_iid}")
+    print("Configuration:")
+    print(f"GitLab URL: {settings.gitlab_base_url}")
+    print(f"Jira URL: {settings.jira_base_url}")
     print("Status: NOT IMPLEMENTED YET")
+
     return 2
 
 
