@@ -7,6 +7,7 @@ from mr_validator.application.validate_merge_request import ValidateMergeRequest
 from mr_validator.clients.gitlab_client import GitLabClient
 from mr_validator.clients.jira_client import JiraClient
 from mr_validator.config import Settings
+from mr_validator.services.report_builder import CliReportRenderer
 from mr_validator.services.ticket_extractor import TicketExtractor
 
 
@@ -58,10 +59,7 @@ async def run_validate(
         mr_iid=mr_iid,
     )
 
-    for check in result.checks:
-        print(f"[{check.status.value}] {check.name}: {check.message}")
-
-    print("Result: PASSED" if result.passed else "Result: FAILED")
+    CliReportRenderer().render(result)
 
     return result.exit_code
 
@@ -88,18 +86,13 @@ async def async_main() -> int:
 
     except httpx.HTTPStatusError as error:
         print("[ERROR] HTTP request failed.")
-        print(
-            f"Status code: "
-            f"{error.response.status_code}"
-
-        )
+        print(f"Status code: {error.response.status_code}")
         return 2
 
     except Exception as error:
         print("[ERROR] Unexpected runtime error.")
         print(str(error))
         return 2
-
 
 
 def main() -> None:
