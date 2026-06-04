@@ -1,3 +1,4 @@
+import logging
 from urllib.parse import quote_plus
 
 import httpx
@@ -5,6 +6,7 @@ import httpx
 from mr_validator.config import Settings
 from mr_validator.domain.models import Commit, MergeRequest
 
+logger = logging.getLogger(__name__)
 
 class GitLabClient:
     def __init__(self, settings: Settings) -> None:
@@ -16,6 +18,17 @@ class GitLabClient:
         mr_iid: int,
     ) -> MergeRequest:
         encoded_project = quote_plus(project)
+
+        logger.info(
+            "Fetching GitLab merge request: project=%s mr_iid=%s",
+            project,
+            mr_iid,
+        )
+
+        logger.debug(
+            "Encoded GitLab project path: %s",
+            encoded_project,
+        )
 
         async with httpx.AsyncClient(
             base_url=self._settings.gitlab_base_url,
@@ -34,12 +47,28 @@ class GitLabClient:
         mr_data = mr_response.json()
         commits_data = commits_response.json()
 
+        logger.debug(
+            "GitLab merge request response loaded: iid=%s",
+            mr_data.get("iid"),
+        )
+
+        logger.debug(
+            "GitLab merge request commits loaded: count=%s",
+            len(commits_data),
+        )
+
         commits = tuple(
             Commit(
                 title=commit["title"],
                 message=commit["message"],
             )
             for commit in commits_data
+        )
+
+        logger.info(
+            "GitLab merge request loaded: iid=%s commits=%s",
+            mr_data["iid"],
+            len(commits),
         )
 
         return MergeRequest(

@@ -8,15 +8,27 @@ class CliReportRenderer:
         self._console = console or Console()
 
     def render(self, result: ValidationResult) -> None:
-        self._console.print("MR Pre-Merge Validation")
+        self._console.print()
+        self._console.rule("MR Pre-Merge Validation")
         self._console.print()
 
         for check in result.checks:
             style = "green" if check.status == CheckStatus.PASS else "red"
-            self._console.print(f"[{style}][{check.status.value}][/{style}] {check.name}")
-            self._console.print(f"       {check.message}")
+            self._console.print(
+                f"[{style}][{check.status.value}][/{style}] {check.name}",
+                markup=True,
+                highlight=False,
+            )
+            self._console.print(
+                f"       {check.message}",
+                highlight=False,
+            )
             self._console.print()
 
         result_style = "green" if result.passed else "red"
         result_text = "PASSED" if result.passed else "FAILED"
-        self._console.print(f"Result: [{result_style}]{result_text}[/{result_style}]")
+        self._console.print(
+            f"Result: [{result_style}]{result_text}[/{result_style}]",
+            markup=True,
+            highlight=False,
+        )

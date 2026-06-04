@@ -1,8 +1,11 @@
+import logging
 import re
 
 from mr_validator.domain.models import Commit, MergeRequest
 
 JIRA_TICKET_PATTERN = re.compile(r"\b[A-Z][A-Z0-9]+-\d+\b")
+
+logger = logging.getLogger(__name__)
 
 
 class TicketExtractor:
@@ -21,9 +24,14 @@ class TicketExtractor:
                 if ticket not in tickets:
                     tickets.append(ticket)
 
+        logger.debug(
+            "Extracted Jira tickets from merge request: %s",
+            tickets,
+        )
         return tuple(tickets)
 
-    def _commit_texts(self, commits: tuple[Commit, ...]) -> tuple[str, ...]:
+    @staticmethod
+    def _commit_texts(commits: tuple[Commit, ...]) -> tuple[str, ...]:
         return tuple(
             text
             for commit in commits
