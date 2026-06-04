@@ -1,6 +1,8 @@
 import argparse
 import asyncio
 
+import httpx
+
 from mr_validator.application.validate_merge_request import ValidateMergeRequestUseCase
 from mr_validator.clients.gitlab_client import GitLabClient
 from mr_validator.clients.jira_client import JiraClient
@@ -67,13 +69,37 @@ async def run_validate(
 async def async_main() -> int:
     parser = build_parser()
     args = parser.parse_args()
-    if args.command == "validate":
-        return await run_validate(
-            project=args.project,
-            mr_iid=args.mr_iid,
-        )
+    try:
+        if args.command == "validate":
+            return await run_validate(
+                project=args.project,
+                mr_iid=args.mr_iid,
+            )
 
-    return 2
+        return 2
+    except httpx.ConnectError:
+        settings = Settings()
+        print("[ERROR] Cannot connect to Jira server.")
+        print(f"URL: {settings.jira_base_url}")
+        print()
+        print("Please start mock Jira:")
+        print("python mock_jira.py")
+        return 2
+
+    except httpx.HTTPStatusError as error:
+        print("[ERROR] HTTP request failed.")
+        print(
+            f"Status code: "
+            f"{error.response.status_code}"
+
+        )
+        return 2
+
+    except Exception as error:
+        print("[ERROR] Unexpected runtime error.")
+        print(str(error))
+        return 2
+
 
 
 def main() -> None:
