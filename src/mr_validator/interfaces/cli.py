@@ -1,8 +1,11 @@
 import argparse
 import asyncio
 
+from mr_validator.application.validate_merge_request import ValidateMergeRequestUseCase
 from mr_validator.clients.gitlab_client import GitLabClient
+from mr_validator.clients.jira_client import JiraClient
 from mr_validator.config import Settings
+from mr_validator.services.ticket_extractor import TicketExtractor
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -39,19 +42,26 @@ async def run_validate(
     settings = Settings()
 
     gitlab_client = GitLabClient(settings)
+    jira_client = JiraClient(settings)
+    ticket_extractor = TicketExtractor()
 
-    mr = await gitlab_client.get_merge_request(
+    use_case = ValidateMergeRequestUseCase(
+        gitlab_client=gitlab_client,
+        jira_client=jira_client,
+        ticket_extractor=ticket_extractor,
+    )
+
+    result = await use_case.execute(
         project=project,
         mr_iid=mr_iid,
     )
 
-    print("MR Pre-Merge Validator")
-    print(f"Title: {mr.title}")
-    print(f"Branch: {mr.source_branch}")
-    print(f"Draft: {mr.is_draft}")
-    print(f"Commits: {len(mr.commits)}")
+    for check in result.checks:
+        print(f"[{check.status.value}] {check.name}: {check.message}")
 
-    return 0
+    print("Result: PASSED" if result.passed else "Result: FAILED")
+
+    return result.exit_code
 
 
 async def async_main() -> int:
@@ -65,10 +75,9 @@ async def async_main() -> int:
 
     return 2
 
+
 def main() -> None:
-    raise SystemExit(
-        asyncio.run(async_main())
-    )
+    raise SystemExit(asyncio.run(async_main()))
 
 
 if __name__ == "__main__":
