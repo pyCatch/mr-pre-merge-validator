@@ -1,0 +1,1 @@
+# mr-pre-merge-validator
