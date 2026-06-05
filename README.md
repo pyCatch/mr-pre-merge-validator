@@ -58,7 +58,7 @@ Allowed statuses:
 ## Requirements
 
 - Python 3.11
-- Poetry (recommended) or Python `venv`
+- Poetry (recommended) or Python virtual environment (`venv`)
 
 ## Quick Start
 
@@ -113,11 +113,12 @@ python3.11 -m venv .venv
 source .venv/bin/activate
 ```
 
-Install dependencies:
+Install dependencies and the current project:
 
 ```bash
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
+pip install -e .
 ```
 
 Configure environment:
@@ -135,7 +136,7 @@ python3 mock_jira.py
 Run validator:
 
 ```bash
-python3 -m mr_validator.interfaces.cli validate \
+mr-validator validate \
   --project sztomi/mr-validator-homework \
   --mr-iid 1
 ```
@@ -176,6 +177,12 @@ Install development dependencies:
 
 ```bash
 pip install -r requirements-dev.txt
+```
+
+Install the current project in editable mode:
+
+```bash
+pip install -e .
 ```
 
 Run tests:
@@ -250,7 +257,7 @@ poetry run pytest
 Run validator:
 
 ```bash
-python3 -m mr_validator.interfaces.cli validate \
+mr-validator validate \
   --project sztomi/mr-validator-homework \
   --mr-iid 1
 ```
@@ -313,7 +320,6 @@ LOG_LEVEL=DEBUG poetry run mr-validator validate \
 ```
 
 ## Manual Smoke Test
-
 The repository includes a helper script for manually validating multiple Merge Requests from the provided homework repository.
 
 The script runs validation against fixture Merge Requests and helps verify different scenarios, including:
@@ -325,11 +331,14 @@ The script runs validation against fixture Merge Requests and helps verify diffe
 - Multiple Jira tickets
 - Missing Merge Requests
 
-Run smoke test:
+
+Make script executable:
 
 ```bash
 chmod +x scripts/smoke_test.sh
 ```
+
+Run smoke test:
 
 ```bash
 ./scripts/smoke_test.sh
@@ -361,7 +370,6 @@ The project follows a layered architecture:
 
 ## Future Improvements
 
-- CI integration examples
 - Configurable mergeable Jira statuses
 - Docker support
 - Additional validation rules

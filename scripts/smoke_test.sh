@@ -2,9 +2,19 @@
 
 set -uo pipefail
 
+
 PROJECT="sztomi/mr-validator-homework"
 
+if command -v poetry >/dev/null 2>&1; then
+  VALIDATOR_CMD=(poetry run mr-validator)
+else
+  VALIDATOR_CMD=(mr-validator)
+fi
+
+
 echo "Starting MR smoke test..."
+echo "Project: $PROJECT"
+echo "Validator command: ${VALIDATOR_CMD[*]}"
 
 for i in {1..100}; do
   echo
@@ -12,7 +22,7 @@ for i in {1..100}; do
   echo "MR $i"
   echo "=================================================="
 
-  poetry run mr-validator validate \
+  "${VALIDATOR_CMD[@]}" validate \
     --project "$PROJECT" \
     --mr-iid "$i"
 
