@@ -58,7 +58,7 @@ Allowed statuses:
 ## Requirements
 
 - Python 3.11+
-- Poetry
+- Poetry (recommended)
 
 ## Installation
 
@@ -69,10 +69,75 @@ git clone <repository-url>
 cd mr-pre-merge-validator
 ```
 
+### Setup with Poetry (recommended)
+
 Install dependencies:
 
 ```bash
 poetry install
+```
+
+Run validator:
+
+```bash
+poetry run mr-validator validate \
+  --project sztomi/mr-validator-homework \
+  --mr-iid 1
+```
+
+Run tests:
+
+```bash
+poetry run pytest
+```
+
+Run static checks:
+
+```bash
+poetry run ruff check .
+poetry run mypy src
+```
+
+### Setup with venv
+
+Create virtual environment:
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+```
+
+Install runtime dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Install development dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Run validator:
+
+```bash
+python -m mr_validator.interfaces.cli validate \
+  --project sztomi/mr-validator-homework \
+  --mr-iid 1
+```
+
+Run tests:
+
+```bash
+pytest
+```
+
+Run static checks:
+
+```bash
+ruff check .
+mypy src
 ```
 
 ## Configuration
@@ -82,14 +147,14 @@ Create `.env` file:
 ```env
 GITLAB_BASE_URL=https://gitlab.com
 JIRA_BASE_URL=http://localhost:8080
-
+JIRA_TOKEN=dummy-token
+REQUEST_TIMEOUT_SECONDS=10
 LOG_LEVEL=INFO
-HTTP_TIMEOUT=10
 ```
 
 ## Run Mock Jira Server
 
-Start mock Jira server:
+For local homework setup, start mock Jira server:
 
 ```bash
 python mock_jira.py
@@ -100,6 +165,7 @@ The server will be available at:
 ```txt
 http://localhost:8080
 ```
+If you are using a real Jira instance, update `JIRA_BASE_URL` in `.env` and skip this step.
 
 ## Usage
 
@@ -194,7 +260,6 @@ The project follows a layered architecture:
 
 ## Future Improvements
 
-- Better runtime error handling
 - CI integration examples
 - Configurable mergeable Jira statuses
 - Docker support
