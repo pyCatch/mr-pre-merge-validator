@@ -90,21 +90,32 @@ async def async_main() -> int:
 
         return 2
     except httpx.ConnectError:
-        logger.error("Cannot connect to Jira server: url=%s", settings.jira_base_url)
-        print("[ERROR] Cannot connect to Jira server.")
-        print(f"URL: {settings.jira_base_url}")
+        logger.error(
+            "Cannot connect to external service: gitlab_url=%s jira_url=%s",
+            settings.gitlab_base_url,
+            settings.jira_base_url,
+        )
+        print("[ERROR] Cannot connect to GitLab or Jira.")
+        print(f"GitLab URL: {settings.gitlab_base_url}")
+        print(f"Jira URL: {settings.jira_base_url}")
         print()
-        print("Please start mock Jira:")
-        print("python mock_jira.py")
+        print("Check network access and service availability.")
+        if settings.jira_base_url == "http://localhost:8080":
+            print()
+            print("Local homework setup detected.")
+            print("Start mock Jira server:")
+            print("python mock_jira.py")
         return 2
 
     except httpx.HTTPStatusError as error:
         logger.error(
-            "HTTP request failed: status_code=%s",
+            "HTTP request failed: status_code=%s url=%s",
             error.response.status_code,
+            error.request.url,
         )
         print("[ERROR] HTTP request failed.")
         print(f"Status code: {error.response.status_code}")
+        print(f"URL: {error.request.url}")
         return 2
 
     except Exception as error:
