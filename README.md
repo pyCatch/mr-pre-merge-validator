@@ -86,7 +86,7 @@ cp .env.example .env
 Start local mock Jira:
 
 ```bash
-python mock_jira.py
+python3 mock_jira.py
 ```
 
 Run validator:
@@ -129,13 +129,13 @@ cp .env.example .env
 Start local mock Jira:
 
 ```bash
-python mock_jira.py
+python3 mock_jira.py
 ```
 
 Run validator:
 
 ```bash
-python -m mr_validator.interfaces.cli validate \
+python3 -m mr_validator.interfaces.cli validate \
   --project sztomi/mr-validator-homework \
   --mr-iid 1
 ```
@@ -214,7 +214,7 @@ LOG_LEVEL=INFO
 For local homework setup, start mock Jira server:
 
 ```bash
-python mock_jira.py
+python3 mock_jira.py
 ```
 
 The server will be available at:
@@ -250,7 +250,7 @@ poetry run pytest
 Run validator:
 
 ```bash
-python -m mr_validator.interfaces.cli validate \
+python3 -m mr_validator.interfaces.cli validate \
   --project sztomi/mr-validator-homework \
   --mr-iid 1
 ```
