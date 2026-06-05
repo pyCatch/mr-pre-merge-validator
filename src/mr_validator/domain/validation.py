@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import IntEnum, StrEnum
 
 
 class CheckStatus(StrEnum):
@@ -7,10 +7,10 @@ class CheckStatus(StrEnum):
     FAIL = "FAIL"
 
 
-class ExitCode(StrEnum):
-    SUCCESS = "0"
-    VALIDATION_FAILED = "1"
-    RUNTIME_ERROR = "2"
+class ExitCode(IntEnum):
+    SUCCESS = 0
+    VALIDATION_FAILED = 1
+    RUNTIME_ERROR = 2
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,4 +34,8 @@ class ValidationResult:
 
     @property
     def exit_code(self) -> int:
-        return int(ExitCode.SUCCESS if self.passed else ExitCode.VALIDATION_FAILED)
+        return (
+            ExitCode.SUCCESS
+            if self.passed
+            else ExitCode.VALIDATION_FAILED
+    )

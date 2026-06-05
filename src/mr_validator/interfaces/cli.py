@@ -8,6 +8,7 @@ from mr_validator.application.validate_merge_request import ValidateMergeRequest
 from mr_validator.clients.gitlab_client import GitLabClient
 from mr_validator.clients.jira_client import JiraClient
 from mr_validator.config import Settings
+from mr_validator.domain.validation import ExitCode
 from mr_validator.logging import configure_logging
 from mr_validator.services.report_builder import CliReportRenderer
 from mr_validator.services.ticket_extractor import TicketExtractor
@@ -88,8 +89,11 @@ async def async_main() -> int:
                 settings=settings,
             )
 
-        return 2
-    except httpx.ConnectError:
+        return ExitCode.RUNTIME_ERROR
+    except (
+        httpx.ConnectError,
+        httpx.TimeoutException,
+    ):
         logger.error(
             "Cannot connect to external service: gitlab_url=%s jira_url=%s",
             settings.gitlab_base_url,
@@ -105,7 +109,7 @@ async def async_main() -> int:
             print("Local homework setup detected.")
             print("Start mock Jira server:")
             print("python mock_jira.py")
-        return 2
+        return ExitCode.RUNTIME_ERROR
 
     except httpx.HTTPStatusError as error:
         logger.error(
@@ -116,13 +120,13 @@ async def async_main() -> int:
         print("[ERROR] HTTP request failed.")
         print(f"Status code: {error.response.status_code}")
         print(f"URL: {error.request.url}")
-        return 2
+        return ExitCode.RUNTIME_ERROR
 
     except Exception as error:
         logger.exception("Unexpected runtime error")
         print("[ERROR] Unexpected runtime error.")
         print(str(error))
-        return 2
+        return ExitCode.RUNTIME_ERROR
 
 
 def main() -> None:

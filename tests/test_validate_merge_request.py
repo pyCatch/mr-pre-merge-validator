@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, Mock, call
 
 import httpx
 import pytest
@@ -191,6 +191,44 @@ async def test_execute_passes_when_jira_ticket_status_is_mergeable(status: str) 
 
 
 @pytest.mark.asyncio
+async def test_execute_passes_when_all_referenced_tickets_are_mergeable() -> None:
+    """Ensure validation succeeds when all referenced Jira tickets are mergeable."""
+    jira_client = AsyncMock()
+    jira_client.get_issue.side_effect = [
+        make_jira_issue(key="WMS-1001", status="In Review"),
+        make_jira_issue(key="WMS-1002", status="Done"),
+    ]
+
+    gitlab_client = AsyncMock()
+    gitlab_client.get_merge_request.return_value = make_merge_request()
+
+    ticket_extractor = Mock()
+    ticket_extractor.extract_from_merge_request.return_value = ("WMS-1001", "WMS-1002")
+
+    use_case = ValidateMergeRequestUseCase(
+        gitlab_client=gitlab_client,
+        jira_client=jira_client,
+        ticket_extractor=ticket_extractor,
+    )
+
+    result = await use_case.execute(
+        project=TEST_PROJECT,
+        mr_iid=TEST_MR_IID,
+    )
+
+    assert result.passed is True
+    assert result.exit_code == 0
+    assert all(check.status == CheckStatus.PASS for check in result.checks)
+    assert jira_client.get_issue.await_count == 2
+    jira_client.get_issue.assert_has_awaits(
+        [
+            call("WMS-1001"),
+            call("WMS-1002"),
+        ]
+    )
+
+
+@pytest.mark.asyncio
 async def test_execute_fails_when_one_of_multiple_tickets_is_not_mergeable() -> None:
     """Ensure validation fails when at least one Jira ticket is not mergeable."""
     jira_client = AsyncMock()
@@ -223,3 +261,9 @@ async def test_execute_fails_when_one_of_multiple_tickets_is_not_mergeable() -> 
         for check in result.checks
     )
     assert jira_client.get_issue.await_count == 2
+    jira_client.get_issue.assert_has_awaits(
+        [
+            call("WMS-1001"),
+            call("WMS-1002"),
+        ]
+    )
