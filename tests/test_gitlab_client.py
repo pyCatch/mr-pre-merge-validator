@@ -9,6 +9,7 @@ from mr_validator.config import Settings
 async def test_get_merge_request_returns_merge_request(
     httpx_mock: HTTPXMock,
 ) -> None:
+    """Ensure GitLab client returns a parsed merge request with commits."""
     httpx_mock.add_response(
         json={
             "iid": 1,

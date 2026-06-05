@@ -9,6 +9,7 @@ from mr_validator.config import Settings
 async def test_get_issue_returns_jira_issue(
     httpx_mock: HTTPXMock,
 ) -> None:
+    """Ensure Jira client returns a parsed Jira issue."""
     httpx_mock.add_response(
         json={
             "key": "WMS-1234",

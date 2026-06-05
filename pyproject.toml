@@ -41,6 +41,8 @@ select = [
 testpaths = ["tests"]
 addopts = "-v"
 asyncio_mode = "auto"
+log_cli = true
+log_cli_level = "DEBUG"
 
 [tool.mypy]
 python_version = "3.11"

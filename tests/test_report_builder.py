@@ -5,6 +5,7 @@ from mr_validator.services.report_builder import CliReportRenderer
 
 
 def test_cli_report_renderer_outputs_validation_result() -> None:
+    """Ensure CLI report renderer outputs validation results correctly."""
     console = Console(record=True, force_terminal=False, width=120)
     renderer = CliReportRenderer(console=console)
 

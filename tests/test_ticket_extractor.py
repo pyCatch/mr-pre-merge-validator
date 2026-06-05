@@ -3,6 +3,7 @@ from mr_validator.services.ticket_extractor import TicketExtractor
 
 
 def test_extracts_ticket_from_title() -> None:
+    """Ensure a Jira ticket is extracted from the merge request title."""
     merge_request = MergeRequest(
         iid=1,
         title="WMS-1234: Add validation",
@@ -18,6 +19,7 @@ def test_extracts_ticket_from_title() -> None:
 
 
 def test_extracts_tickets_from_all_sources_without_duplicates() -> None:
+    """Ensure Jira tickets are collected from all MR sources without duplicates."""
     merge_request = MergeRequest(
         iid=1,
         title="WMS-1234: Add validation",
@@ -38,6 +40,7 @@ def test_extracts_tickets_from_all_sources_without_duplicates() -> None:
 
 
 def test_returns_empty_tuple_when_no_tickets_found() -> None:
+    """Ensure an empty tuple is returned when no Jira tickets are found."""
     merge_request = MergeRequest(
         iid=1,
         title="Add validation",
