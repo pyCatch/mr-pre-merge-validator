@@ -58,7 +58,7 @@ Allowed statuses:
 ## Requirements
 
 - Python 3.11
-- Poetry (recommended)
+- Poetry (recommended) or Python `venv`
 
 ## Installation
 
@@ -75,27 +75,6 @@ Install dependencies:
 
 ```bash
 poetry install
-```
-
-Run validator:
-
-```bash
-poetry run mr-validator validate \
-  --project sztomi/mr-validator-homework \
-  --mr-iid 1
-```
-
-Run tests:
-
-```bash
-poetry run pytest
-```
-
-Run static checks:
-
-```bash
-poetry run ruff check .
-poetry run mypy src
 ```
 
 ### Setup with venv
@@ -117,14 +96,6 @@ Install development dependencies:
 
 ```bash
 pip install -r requirements-dev.txt
-```
-
-Run validator:
-
-```bash
-python -m mr_validator.interfaces.cli validate \
-  --project sztomi/mr-validator-homework \
-  --mr-iid 1
 ```
 
 Run tests:
@@ -158,7 +129,7 @@ REQUEST_TIMEOUT_SECONDS=10
 LOG_LEVEL=INFO
 ```
 
-## Run Mock Jira Server
+## Local Mock Jira Setup
 
 For local homework setup, start mock Jira server:
 
@@ -176,12 +147,40 @@ If you are using a real Jira instance, update `JIRA_BASE_URL` in `.env` and skip
 
 ## Usage
 
+### Run with Poetry
+
 Run validator:
 
 ```bash
 poetry run mr-validator validate \
   --project sztomi/mr-validator-homework \
   --mr-iid 1
+```
+
+Run tests:
+
+```bash
+poetry run ruff check .
+poetry run mypy src
+poetry run pytest
+```
+
+### Run with venv
+
+Run validator:
+
+```bash
+python -m mr_validator.interfaces.cli validate \
+  --project sztomi/mr-validator-homework \
+  --mr-iid 1
+```
+
+Run tests:
+
+```bash
+ruff check .
+mypy src
+pytest
 ```
 
 ## Example Output
@@ -233,15 +232,30 @@ LOG_LEVEL=DEBUG poetry run mr-validator validate \
   --mr-iid 1
 ```
 
-## Run Tests
+## Manual Smoke Test
 
-Run all checks:
+The repository includes a helper script for manually validating multiple Merge Requests from the provided homework repository.
+
+The script runs validation against fixture Merge Requests and helps verify different scenarios, including:
+
+- Successful validation
+- Draft Merge Requests
+- Missing Jira tickets
+- Invalid Jira statuses
+- Multiple Jira tickets
+- Missing Merge Requests
+
+Run smoke test:
 
 ```bash
-poetry run ruff check .
-poetry run mypy src
-poetry run pytest
+chmod +x scripts/smoke_test.sh
 ```
+
+```bash
+./scripts/smoke_test.sh
+```
+
+The script stops automatically when a runtime error occurs (for example, when a Merge Request no longer exists).
 
 ## Project Structure
 

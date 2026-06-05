@@ -31,7 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
     validate_parser.add_argument(
         "--project",
         required=True,
-        help="GitLab project path, for example: sztomi/mr-validator-homework.",
+        help="GitLab project path, for example: group/project.",
     )
     validate_parser.add_argument(
         "--mr-iid",
