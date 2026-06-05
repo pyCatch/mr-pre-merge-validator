@@ -60,6 +60,86 @@ Allowed statuses:
 - Python 3.11
 - Poetry (recommended) or Python `venv`
 
+## Quick Start
+
+### Option 1: Poetry (recommended)
+
+Clone repository:
+
+```bash
+git clone <repository-url>
+cd mr-pre-merge-validator
+```
+
+Install dependencies:
+
+```bash
+poetry install
+```
+
+Configure environment:
+
+```bash
+cp .env.example .env
+```
+
+Start local mock Jira:
+
+```bash
+python mock_jira.py
+```
+
+Run validator:
+
+```bash
+poetry run mr-validator validate \
+  --project sztomi/mr-validator-homework \
+  --mr-iid 1
+```
+
+### Option 2: Python venv
+
+Clone repository:
+
+```bash
+git clone <repository-url>
+cd mr-pre-merge-validator
+```
+
+Create virtual environment:
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+Configure environment:
+
+```bash
+cp .env.example .env
+```
+
+Start local mock Jira:
+
+```bash
+python mock_jira.py
+```
+
+Run validator:
+
+```bash
+python -m mr_validator.interfaces.cli validate \
+  --project sztomi/mr-validator-homework \
+  --mr-iid 1
+```
+
 ## Installation
 
 Clone repository:
