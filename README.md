@@ -1,6 +1,6 @@
 # MR Pre-Merge Validator
 
-CLI tool for validating GitLab Merge Requests before merge.
+CLI tool for validating GitLab Merge Requests before merge using GitLab and Jira integration.
 
 The validator checks merge request readiness using GitLab and Jira integration and returns a clear validation report suitable for local development and CI pipelines.
 
@@ -14,7 +14,7 @@ The validator checks merge request readiness using GitLab and Jira integration a
   - Commit messages
 - Verify Jira ticket existence
 - Validate Jira ticket status
-- Structured logging (`INFO` / `DEBUG`)
+- Structured logging (`ERROR` / `INFO` / `DEBUG`)
 - Human-readable CLI report
 - Async architecture using `httpx`
 - Test coverage with `pytest`
@@ -27,7 +27,7 @@ The validator performs the following checks:
 
 Draft merge requests cannot be merged.
 
-### 2. Jira ticket exists
+### 2. Jira ticket is referenced
 
 At least one Jira ticket must be referenced.
 
@@ -57,7 +57,7 @@ Allowed statuses:
 
 ## Requirements
 
-- Python 3.11+
+- Python 3.11
 - Poetry (recommended)
 
 ## Installation
@@ -142,7 +142,13 @@ mypy src
 
 ## Configuration
 
-Create `.env` file:
+Copy environment template:
+
+```bash
+cp .env.example .env
+```
+
+Update values if needed:
 
 ```env
 GITLAB_BASE_URL=https://gitlab.com
@@ -165,6 +171,7 @@ The server will be available at:
 ```txt
 http://localhost:8080
 ```
+
 If you are using a real Jira instance, update `JIRA_BASE_URL` in `.env` and skip this step.
 
 ## Usage
@@ -263,4 +270,4 @@ The project follows a layered architecture:
 - CI integration examples
 - Configurable mergeable Jira statuses
 - Docker support
-- More validation rules
+- Additional validation rules
